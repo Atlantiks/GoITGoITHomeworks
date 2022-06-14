@@ -1,10 +1,9 @@
 package homework9;
 
 
-public class MyQueueClass implements MyQueue {
-
-    Node firstNode;
-    Node lastNode;
+public class MyQueueClass<T> implements MyQueue<T> {
+    Node<T> firstNode;
+    Node<T> lastNode;
     int size;
     int maxSize;
 
@@ -14,16 +13,16 @@ public class MyQueueClass implements MyQueue {
     }
 
     @Override
-    public void add(Object value) {
+    public void add(T value) {
         if (size == maxSize) {
             System.out.println("Очередь переполнена! Невозможно добавить элемент");
         }
         if (size == 0) {
-            firstNode = new Node(value,null);
+            firstNode = new Node<T>(value,null);
             lastNode = firstNode;
         } else {
-            Node previous = lastNode;
-            lastNode = new Node(value, null);
+            Node<T> previous = lastNode;
+            lastNode = new Node<T>(value, null);
             previous.next = lastNode;
         }
         size++;
@@ -34,8 +33,8 @@ public class MyQueueClass implements MyQueue {
         if (index == 0) {
             firstNode = firstNode.next;
         } else {
-            Node previousNode = firstNode;
-            Node followingNode = firstNode.next;
+            Node<T> previousNode = firstNode;
+            Node<T> followingNode = firstNode.next;
 
             for (int i = 1; i < index; i++) {
                 previousNode = followingNode;
@@ -60,13 +59,13 @@ public class MyQueueClass implements MyQueue {
     }
 
     @Override
-    public Object peek() {
+    public T peek() {
         return firstNode.actual;
     }
 
     @Override
-    public Object poll() {
-        Node element = firstNode;
+    public T poll() {
+        Node<T> element = firstNode;
 
         firstNode = firstNode.next;
         size--;

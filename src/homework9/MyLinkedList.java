@@ -1,5 +1,7 @@
 package homework9;
 
+import java.util.Objects;
+
 public class MyLinkedList<T> implements MyList<T>, MyQueue<T> {
     Node<T> firstNode;
     Node<T> lastNode;
@@ -24,13 +26,17 @@ public class MyLinkedList<T> implements MyList<T>, MyQueue<T> {
 
     @Override
     public void remove(int index) {
-        if (index > size || index < 0) {
-            System.out.println("Элемента с заданныи индексом не существует");
+        if (index >= size || index < 0) {
+            System.out.printf("Элемента с заданныи индексом (%d) не существует\n", index);
             return;
-        }
-
-        if (index == 0) {
-            firstNode = firstNode.next;
+        } else if (index == 0) {
+            if (size == 1) {
+                clear();
+                return;
+            } else {
+                //System.out.println(size);
+                firstNode = firstNode.next;
+            }
         } else {
             Node<T> previousNode = firstNode;
             Node<T> followingNode = firstNode.next;
@@ -57,11 +63,12 @@ public class MyLinkedList<T> implements MyList<T>, MyQueue<T> {
 
     @Override
     public T peek() {
-        return firstNode.actual;
+        return !Objects.isNull(firstNode) ? firstNode.actual : null;
     }
 
     @Override
     public T poll() {
+        if (Objects.isNull(firstNode)) return null;
         Node<T> element = firstNode;
         firstNode = firstNode.next;
         size--;
@@ -71,7 +78,7 @@ public class MyLinkedList<T> implements MyList<T>, MyQueue<T> {
     @Override
     public T get(int index) {
         if (index < 0 || index >= size) {
-            System.out.println("Элемента с заданныи индексом не существует");
+            System.out.printf("Элемента с заданныи индексом (%d) не существует\n", index);
             return null;
         } else if (index == 0) {
             return firstNode.actual;

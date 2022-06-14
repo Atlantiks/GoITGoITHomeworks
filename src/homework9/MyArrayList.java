@@ -22,7 +22,7 @@ public class MyArrayList<T> implements MyList<T> {
     @Override
     public void remove(int index) {
         if (index >= positionToAddTo || index < 0) {
-            System.out.println("Элемента с заданныи индексом не существует");
+            System.out.printf("Элемента с заданныи индексом (%d) не существует\n", index);
             return;
         }
         Object[] newArray = new Object[array.length - 1];
@@ -48,7 +48,7 @@ public class MyArrayList<T> implements MyList<T> {
     @Override
     public T get(int index) {
         if (index >= array.length || index < 0) {
-            System.out.println("Элемента с заданныи индексом не существует");
+            System.out.printf("Элемента с заданныи индексом (%d) не существует\n", index);
             return null;
         } else {
             return (T)array[index];

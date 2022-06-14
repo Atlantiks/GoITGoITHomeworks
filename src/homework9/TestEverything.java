@@ -9,8 +9,7 @@ public class TestEverything {
         testList(arraylist, "arraylist");
         testList(linkedlist,"linkedlist");
 
-        System.out.println(linkedlist.poll());
-        System.out.println(linkedlist.poll());
+        testQue(linkedlist, "linkedlist");
 
         testMap.put("KEY", 12);
         testMap.put("ANOTHER_KEY", 14);
@@ -50,5 +49,18 @@ public class TestEverything {
         System.out.println("list.get(0) = " + list.get(0));
         System.out.println("list.size() = " + list.size());
 
+    }
+
+    public static void testQue(MyQueue<Integer> queue, String name) {
+        System.out.println("Тестируем очередь: " + name);
+        System.out.println("====================================");
+        System.out.println("queue.size() = " + queue.size());
+        System.out.println("queue.peek() = " + queue.peek());
+        System.out.println("queue.poll() = " + queue.poll());
+        queue.add(123);
+        System.out.println("queue.size() = " + queue.size());
+        System.out.println("queue.peek() = " + queue.peek());
+        System.out.println("queue.poll() = " + queue.poll());
+        System.out.println("queue.size() = " + queue.size());
     }
 }
