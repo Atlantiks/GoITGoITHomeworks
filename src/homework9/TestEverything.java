@@ -8,16 +8,8 @@ public class TestEverything {
 
         testList(arraylist, "arraylist");
         testList(linkedlist,"linkedlist");
-
         testQue(linkedlist, "linkedlist");
-
-        testMap.put("KEY", 12);
-        testMap.put("ANOTHER_KEY", 14);
-        testMap.put("KEY", 1);
-        System.out.println(testMap.size);
-        System.out.println(testMap.get("KEY"));
-        System.out.println(testMap.get("ANOTHER_KEY"));
-
+        testMap(testMap);
     }
 
     public static void testList(MyList<Integer> list, String name) {
@@ -62,5 +54,14 @@ public class TestEverything {
         System.out.println("queue.peek() = " + queue.peek());
         System.out.println("queue.poll() = " + queue.poll());
         System.out.println("queue.size() = " + queue.size());
+    }
+
+    public static void testMap(MyHashMap map) {
+        map.put("KEY", 12);
+        map.put("ANOTHER_KEY", 14);
+        map.put("KEY", 1);
+        System.out.println(map.size);
+        System.out.println(map.get("KEY"));
+        System.out.println(map.get("ANOTHER_KEY"));
     }
 }

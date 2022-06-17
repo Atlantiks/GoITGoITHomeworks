@@ -2,12 +2,20 @@ package homework11;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) {
         List<String> names = Arrays.asList("Ivan", "Peter", "Andrew", "John", "Kevin");
+        String[][] dataArray = new String[][]{{"1", "2", "0"},
+                {"4", "5"}};
+
+
         System.out.println(oddNamesList(names));
         System.out.println(switchToUpperCaseAndSort(names));
+        System.out.println(getAllNumsFromArray(dataArray));
     }
 
     public static String oddNamesList(List<String> names) {
@@ -23,5 +31,12 @@ public class Main {
                 .map(String::toUpperCase).sorted()
                 .reduce("", (x, y) -> x + " " + y)
                 .trim();
+    }
+
+    public static String getAllNumsFromArray(String[][] nums) {
+        return Arrays.stream(nums)
+                .flatMap(Arrays::stream)
+                .sorted()
+                .reduce("",(a,b) -> a + b + ", ");
     }
 }

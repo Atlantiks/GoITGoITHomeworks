@@ -1,7 +1,6 @@
 package homework9;
 
 public class MyStack {
-
     Object[] stack;
     int position;
 
