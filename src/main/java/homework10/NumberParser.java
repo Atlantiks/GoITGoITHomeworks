@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class NumberParser {
     public static void main(String[] args) {
-        File file = new File("./src/homework10/file.txt");
+        File file = new File("./src/main/java/homework10/file.txt");
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line = reader.readLine();

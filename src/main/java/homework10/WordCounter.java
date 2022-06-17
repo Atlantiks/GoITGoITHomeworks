@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 
 public class WordCounter {
     public static void main(String[] args) {
-        //File file = new File("./src/homework10/words.txt");
-        String fileName = "./src/homework10/words.txt";
+        //File file = new File("./src/main/java/homework10/words.txt");
+        String fileName = "./src/main/java/homework10/words.txt";
         Map<String,Integer> words = new HashMap<>();
 
         try (Stream<String> streamOfLines = Files.lines(Paths.get(fileName))) {
