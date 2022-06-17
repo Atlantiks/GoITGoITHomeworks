@@ -7,14 +7,14 @@ public class MyQueueClass<T> implements MyQueue<T> {
     int size;
     int maxSize;
 
-    public MyQueueClass(int maxSizesize) {
+    public MyQueueClass(int maxSize) {
         clear();
-        this.maxSize = maxSizesize;
+        this.maxSize = maxSize;
     }
 
     @Override
     public void add(T value) {
-        if (size == maxSize) {
+        if (size >= maxSize) {
             System.out.println("Очередь переполнена! Невозможно добавить элемент");
         }
         if (size == 0) {
