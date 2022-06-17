@@ -1,17 +1,21 @@
 package homework11;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) {
         List<String> names = Arrays.asList("Ivan", "Peter", "Andrew", "John", "Kevin");
-        String[][] dataArray = new String[][]{{"1", "2", "0"},
-                {"4", "5"}};
-
+        List<String> sortedNames;
+        String[] dataArray = {"1, 2, 0","4, 5"};
 
         System.out.println(oddNamesList(names));
-        System.out.println(switchToUpperCaseAndSort(names));
+        System.out.println(sortedNames = reverseSortAndBringToUpperCase(names));
         System.out.println(getAllNumsFromArray(dataArray));
     }
 
@@ -23,17 +27,18 @@ public class Main {
         }).trim();
     }
 
-    public static String switchToUpperCaseAndSort(List<String> names) {
-        return names.stream()
-                .map(String::toUpperCase).sorted()
-                .reduce("", (x, y) -> x + " " + y)
-                .trim();
+    public static ArrayList<String> reverseSortAndBringToUpperCase(List<String> namesList) {
+        return namesList.stream()
+                .map(String::toUpperCase)
+                .sorted(Comparator.reverseOrder())
+                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+
     }
 
-    public static String getAllNumsFromArray(String[][] nums) {
-        return Arrays.stream(nums)
-                .flatMap(Arrays::stream)
+    public static String getAllNumsFromArray(String[] nums) {
+        return Stream.of(nums)
+                .flatMap(value -> Stream.of(value.split(", ")))
                 .sorted()
-                .reduce("",(a,b) -> a + b + ", ");
+                .collect(Collectors.joining(", "));
     }
 }
