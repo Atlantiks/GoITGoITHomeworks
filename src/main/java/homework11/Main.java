@@ -1,9 +1,6 @@
 package homework11;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -11,20 +8,18 @@ import java.util.stream.Stream;
 public class Main {
     public static void main(String[] args) {
         List<String> names = Arrays.asList("Ivan", "Peter", "Andrew", "John", "Kevin");
-        List<String> sortedNames;
         String[] dataArray = {"1, 2, 0","4, 5"};
 
         System.out.println(oddNamesList(names));
-        System.out.println(sortedNames = reverseSortAndBringToUpperCase(names));
+        System.out.println(reverseSortAndBringToUpperCase(names));
         System.out.println(getAllNumsFromArray(dataArray));
     }
 
     public static String oddNamesList(List<String> names) {
-        final int[] counter = {1};
-        return names.stream().reduce("", (a, b) -> {
-            if (counter[0]++ % 2 != 0) return a + (counter[0] - 1) + ". " + b + " ";
-            else return a;
-        }).trim();
+        return Stream.iterate(1, n -> ++n)
+                .limit(names.size())
+                .filter(n -> n % 2 != 0)
+                .map(n -> n + ". " + names.get(n - 1)).collect(Collectors.joining(", "));
     }
 
     public static ArrayList<String> reverseSortAndBringToUpperCase(List<String> namesList) {
@@ -32,7 +27,6 @@ public class Main {
                 .map(String::toUpperCase)
                 .sorted(Comparator.reverseOrder())
                 .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-
     }
 
     public static String getAllNumsFromArray(String[] nums) {
@@ -40,5 +34,9 @@ public class Main {
                 .flatMap(value -> Stream.of(value.split(", ")))
                 .sorted()
                 .collect(Collectors.joining(", "));
+    }
+
+    public static Stream<Long> linearGenerator(int c, int m, int seed) {
+        return Stream.iterate(1L, n -> n + 1);
     }
 }
