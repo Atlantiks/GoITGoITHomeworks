@@ -10,9 +10,17 @@ public class Main {
         List<String> names = Arrays.asList("Ivan", "Peter", "Andrew", "John", "Kevin");
         String[] dataArray = {"1, 2, 0","4, 5"};
 
+        // Task 1
         System.out.println(oddNamesList(names));
+        // Task 2
         System.out.println(reverseSortAndBringToUpperCase(names));
+        // Task 3
         System.out.println(getAllNumsFromArray(dataArray));
+        // Task 4
+        linearGenerator(25214903917L,11,(long)Math.pow(2,48),1)
+                .limit(20)
+                .forEach(System.out::println);
+        // Task 5
     }
 
     public static String oddNamesList(List<String> names) {
@@ -36,7 +44,7 @@ public class Main {
                 .collect(Collectors.joining(", "));
     }
 
-    public static Stream<Long> linearGenerator(int c, int m, int seed) {
-        return Stream.iterate(1L, n -> n + 1);
+    public static Stream<Long> linearGenerator(long a, int c, long m, long seed) {
+        return Stream.iterate(seed, n -> (a * n + c) % m);
     }
 }
