@@ -21,6 +21,8 @@ public class Main {
                 .limit(20)
                 .forEach(System.out::println);
         // Task 5
+        Stream<String> myStream = zip(Stream.of("Summer","Autumn","Winter","Spring"),Stream.of("1","2","3","4","5","6","7"));
+        myStream.forEach(System.out::println);
     }
 
     public static String oddNamesList(List<String> names) {
@@ -46,5 +48,15 @@ public class Main {
 
     public static Stream<Long> linearGenerator(long a, int c, long m, long seed) {
         return Stream.iterate(seed, n -> (a * n + c) % m);
+    }
+
+    public static <T> Stream<T> zip(Stream<T> first, Stream<T> second) {
+        return Stream
+                .concat(first,second)
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toList(), collected -> {
+                            Collections.shuffle(collected);
+                            return collected.stream();
+                        }));
     }
 }
