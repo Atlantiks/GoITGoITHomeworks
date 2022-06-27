@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class Counter {
-    volatile int number = 1;
+    int number = 1;
     Integer userInput = null;
 
     public static void main(String[] args) {
