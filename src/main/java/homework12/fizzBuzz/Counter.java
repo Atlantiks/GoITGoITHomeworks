@@ -2,7 +2,6 @@ package homework12.fizzBuzz;
 
 import java.util.Objects;
 import java.util.Scanner;
-import java.util.concurrent.Semaphore;
 
 public class Counter {
     volatile int number = 1;
@@ -65,7 +64,7 @@ public class Counter {
 
     synchronized public void number() throws InterruptedException {
         if (number % 3 != 0 && number % 5 != 0) {
-            System.out.print(number + ",");
+            System.out.print(number + endLine());
             increaseNumber();
             notifyAll();
         } else {
@@ -79,7 +78,7 @@ public class Counter {
 
     synchronized public void fizzbuzz() throws InterruptedException {
         if (number % 3 == 0 && number % 5 == 0) {
-            System.out.print("fizzbuzz,");
+            System.out.print("fizzbuzz" + endLine());
             increaseNumber();
             notifyAll();
         } else {
@@ -89,7 +88,7 @@ public class Counter {
 
     synchronized public void fizz() throws InterruptedException {
         if (number % 3 == 0 && number % 5 != 0) {
-            System.out.print("fizz,");
+            System.out.print("fizz"  + endLine());
             increaseNumber();
             notifyAll();
         } else {
@@ -99,11 +98,15 @@ public class Counter {
 
     synchronized public void buzz() throws InterruptedException {
         if (number % 3 != 0 && number % 5 == 0) {
-            System.out.print("buzz,");
+            System.out.print("buzz" + endLine());
             increaseNumber();
             notifyAll();
         } else {
             wait();
         }
+    }
+
+    private String endLine() {
+        return number == userInput ? "" : ",";
     }
 }
