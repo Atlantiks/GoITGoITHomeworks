@@ -1,16 +1,16 @@
 package homework13;
 
-public class Post {
+public class TaskToDo {
     private int userId;
     private int id;
     private String title;
-    private String body;
+    private boolean completed;
 
-    public Post(int userId, int id, String title, String body) {
+    public TaskToDo(int userId, int id, String title, boolean completed) {
         this.userId = userId;
         this.id = id;
         this.title = title;
-        this.body = body;
+        this.completed = completed;
     }
 
     public int getUserId() {
@@ -25,7 +25,7 @@ public class Post {
         return title;
     }
 
-    public String getBody() {
-        return body;
+    public boolean isCompleted() {
+        return completed;
     }
 }

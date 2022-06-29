@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class myHTTP {
     private final static HttpClient CLIENT = HttpClient.newHttpClient();
@@ -28,6 +29,8 @@ public class myHTTP {
                 "www.site.com.ua",
                 new User.Company("Carnival","Cruising Brand","Bullshit"));
 
+        // Task 1
+
         String test = createUser(newUser,site + "/users");
         System.out.println(test);
 
@@ -36,20 +39,34 @@ public class myHTTP {
 
         User usr = GSON.fromJson(getUserInfoById(site, 5),User.class);
         usr.company.name = "Carnival LLC";
+        usr.id = 34;
 
 
         String test2 = sendPutRequest(site + "/users",GSON.toJson(usr));
         System.out.println(test2);
 
-        getCommentsToLastPostOfUser(site + "/users/1/posts");
+        // Task 2
+
+        getCommentsToLastPostOfUser(site,5);
+
+        // Task 3
+        System.out.println("\u001B[33m" + "Task 3");
+        System.out.println("================================================" + "\u001B[0m");
+
+        getAllOpenTasks(site);
     }
 
-    public static void getCommentsToLastPostOfUser(String site) throws IOException, InterruptedException {
-        Post[] posts = GSON.fromJson(sendGetRequest(site),Post[].class);
-        var x = Arrays.stream(posts)
-                .max(Comparator.comparing(post -> post.id))
-                .get().id;
-        var result = sendGetRequest("https://jsonplaceholder.typicode.com/posts/" + x + "/comments");
+    public static void getAllOpenTasks(String site) throws IOException, InterruptedException {
+        TaskToDo[] tasks = GSON.fromJson(sendGetRequest(site + "/users/1/todos"),TaskToDo[].class);
+        Stream.of(tasks).filter(task -> !task.isCompleted()).map(GSON::toJson).forEach(System.out::println);
+    }
+
+    public static void getCommentsToLastPostOfUser(String site, int userId) throws IOException, InterruptedException {
+        Post[] posts = GSON.fromJson(sendGetRequest(site + "/users/" + userId + "/posts"),Post[].class);
+        var lastPost = Arrays.stream(posts)
+                .max(Comparator.comparing(Post::getId))
+                .get().getId();
+        var result = sendGetRequest(site + "/posts/" + lastPost + "/comments");
         Files.writeString(Path.of("./src/main/java/homework13/comments.json"),result);
         System.out.println(result);
     }
