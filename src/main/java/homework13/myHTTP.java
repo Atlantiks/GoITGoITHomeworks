@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,7 +43,7 @@ public class myHTTP {
         // загрузка пользователя с сайта и редактирование отдельных его полей перед загрузкой обратно методом PUT
         User usr = GSON.fromJson(getUserInfoById(site, 4),User.class);
         usr.company.name = "Carnival LLC";
-        usr.id = 34;
+        usr.id = 1;
 
         System.out.println("Загрузка пользователя на сервер методом PUT");
         String serverResponse = sendPutRequest(site + "/users/1",GSON.toJson(usr));
@@ -67,7 +68,14 @@ public class myHTTP {
         System.out.println("================================================" + "\u001B[0m");
         System.out.printf("Все открытые задачи для пользователя %d.\n", 7);
         getAllOpenTasks(site, 7);
+
+
+        // Lambda tests to shorten code
+        String result = sendRequest(site, HttpRequest.Builder::GET);
+        System.out.println(result);
     }
+
+
 
     public static void getAllOpenTasks(String site, int userId) throws IOException, InterruptedException {
         TaskToDo[] tasks = GSON.fromJson(sendGetRequest(site + "/users/" + userId + "/todos"),TaskToDo[].class);
@@ -153,5 +161,16 @@ public class myHTTP {
         return response.body();
     }
 
+    private static String sendRequest(String site,
+            Function<HttpRequest.Builder,HttpRequest.Builder> method) throws IOException, InterruptedException {
+
+        var x = method.apply(
+                        HttpRequest.newBuilder()
+                                .uri(URI.create(site + "/users/1")))
+                .build();
+
+        return CLIENT.send(x, HttpResponse.BodyHandlers.ofString()).body();
+
+    }
 }
 
