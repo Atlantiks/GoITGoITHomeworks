@@ -1,13 +1,13 @@
 package homework13;
 
 public class User {
-    private Integer id;
-    private String name;
-    private String email;
-    private Address address;
-    private String phone;
-    private String website;
-    private Company company;
+     int id;
+     String name;
+     String email;
+     Address address;
+     String phone;
+     String website;
+     Company company;
 
     public User(Integer id, String name, String email, Address address, String phone, String website, Company company) {
         this.id = id;
@@ -55,6 +55,10 @@ public class User {
             this.catchPhrase = catchPhrase;
             this.bs = bs;
         }
+    }
+
+    public Integer getId() {
+        return id;
     }
 
 }
