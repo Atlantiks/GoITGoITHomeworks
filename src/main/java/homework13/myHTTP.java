@@ -38,7 +38,8 @@ public class myHTTP {
         System.out.println("Ответ сервера");
         System.out.println(createUser(newUser,site + "/users"));
 
-        System.out.println("Попытка удаления пользователя по id = 1, ответ сервера: " + sendDeleteRequest(site + "/users/1"));
+        System.out.println("Попытка удаления пользователя по id = 1, ответ сервера: " +
+                sendRequestAndGetResponseCode(site + "/users/1", HttpRequest.Builder::DELETE, null));
 
         // загрузка пользователя с сайта и редактирование отдельных его полей перед загрузкой обратно методом PUT
         User usr = GSON.fromJson(getUserInfoById(site, 4),User.class);
@@ -46,8 +47,7 @@ public class myHTTP {
         usr.id = 8;
 
         System.out.println("Загрузка пользователя на сервер методом PUT");
-        String serverResponse = sendPutRequest(site + "/users/1",GSON.toJson(usr));
-        System.out.println(serverResponse);
+        System.out.println(updateUser(usr,site + "/users/1"));
 
         System.out.println("Получение информации обо всех пользователях: ");
         System.out.println(getAllUsersInfo(site));
@@ -69,28 +69,20 @@ public class myHTTP {
         System.out.println("================================================" + "\u001B[0m");
         System.out.printf("Все открытые задачи для пользователя %d.\n", 7);
         getAllOpenTasks(site, 7);
-
-
-        // Lambda tests to shorten code
-        String result2 = sendRequest(site + "/users", x -> x.POST(HttpRequest.BodyPublishers.ofString(GSON.toJson(usr))));
-        System.out.println(result2);
     }
-
-
-
     public static void getAllOpenTasks(String site, int userId) throws IOException, InterruptedException {
-        TaskToDo[] tasks = GSON.fromJson(sendRequest(site + "/users/" + userId + "/todos",HttpRequest.Builder::GET),TaskToDo[].class);
+        TaskToDo[] tasks = GSON.fromJson(sendRequestAndGetResponseBody(site + "/users/" + userId + "/todos",HttpRequest.Builder::GET,null),TaskToDo[].class);
         Stream.of(tasks).filter(task -> !task.isCompleted()).map(GSON::toJson).forEach(System.out::println);
     }
 
     public static void getCommentsToLastPostOfUser(String site, int userId) throws IOException, InterruptedException {
-        Post[] posts = GSON.fromJson(sendRequest(site + "/users/" + userId + "/posts",HttpRequest.Builder::GET),Post[].class);
+        Post[] posts = GSON.fromJson(sendRequestAndGetResponseBody(site + "/users/" + userId + "/posts",HttpRequest.Builder::GET,null),Post[].class);
 
         var lastPost = Arrays.stream(posts)
                 .max(Comparator.comparing(Post::getId))
                 .get().getId();
 
-        var result = sendRequest(site + "/posts/" + lastPost + "/comments",HttpRequest.Builder::GET);
+        var result = sendRequestAndGetResponseBody(site + "/posts/" + lastPost + "/comments",HttpRequest.Builder::GET,null);
 
         Files.writeString(Path.of(String.format("./src/main/java/homework13/user-%d-post-%d-comments.json",userId,lastPost)),result);
         System.out.println(result);
@@ -98,29 +90,28 @@ public class myHTTP {
     }
 
     public static String createUser(User user, String site) throws IOException, InterruptedException {
-        return sendPostRequest(site, GSON.toJson(user));
+        //return sendPostRequest(site, GSON.toJson(user));
+        return sendRequestAndGetResponseBody(site,
+                x -> x.POST(HttpRequest.BodyPublishers.ofString(GSON.toJson(user))),
+                x -> x.header("Content-Type","application/json"));
+    }
+
+    public static String updateUser(User user, String site) throws IOException, InterruptedException{
+        return sendRequestAndGetResponseBody(site,
+                x -> x.PUT(HttpRequest.BodyPublishers.ofString(GSON.toJson(user))),
+                x -> x.header("Content-Type","application/json"));
     }
 
     public static String getAllUsersInfo(String site) throws IOException, InterruptedException {
-        return sendRequest(site + "/users",HttpRequest.Builder::GET);
+        return sendRequestAndGetResponseBody(site + "/users",HttpRequest.Builder::GET,null);
     }
 
     public static String getUserInfoById(String site, int id) throws IOException, InterruptedException {
-        return sendRequest(site + "/users/" + id,HttpRequest.Builder::GET);
+        return sendRequestAndGetResponseBody(site + "/users/" + id,HttpRequest.Builder::GET,null);
     }
 
     public static String getUserInfoByName(String site, String name) throws IOException, InterruptedException {
-        return sendRequest(site + "/users?name=" + convertString(name),HttpRequest.Builder::GET);
-    }
-
-    private static String sendGetRequest(String uri) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(uri))
-                .GET()
-                .build();
-
-        var response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.body();
+        return sendRequestAndGetResponseBody(site + "/users?name=" + convertString(name),HttpRequest.Builder::GET,null);
     }
 
     private static String convertString(String inlet) {
@@ -132,48 +123,26 @@ public class myHTTP {
                 .collect(Collectors.joining(""));
     }
 
-    private static String sendPostRequest(String uri, String data) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(uri))
-                .header("Content-Type","application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(data))
-                .build();
+    private static String sendRequestAndGetResponseBody
+            (String site, UnaryOperator<HttpRequest.Builder> method,
+             UnaryOperator<HttpRequest.Builder> header) throws IOException, InterruptedException {
 
-        var response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.body();
+        var x = method.apply(HttpRequest.newBuilder().uri(URI.create(site)));
+        var requestBuilder = header == null ? x : header.apply(x);
+        var request = requestBuilder.build();
+
+        return CLIENT.send(request, HttpResponse.BodyHandlers.ofString()).body();
     }
 
-    private static int sendDeleteRequest(String uri) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(uri))
-                .DELETE()
-                .build();
+    private static int sendRequestAndGetResponseCode
+            (String site, UnaryOperator<HttpRequest.Builder> method,
+             UnaryOperator<HttpRequest.Builder> header) throws IOException, InterruptedException {
 
-        var response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.statusCode();
-    }
+        var x = method.apply(HttpRequest.newBuilder().uri(URI.create(site)));
+        var requestBuilder = header == null ? x : header.apply(x);
+        var request = requestBuilder.build();
 
-    private static String sendPutRequest(String uri, String data) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(uri))
-                .header("Content-Type","application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString(data))
-                .build();
-
-        var response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.body();
-    }
-
-    private static String sendRequest(String site,
-            UnaryOperator<HttpRequest.Builder> method) throws IOException, InterruptedException {
-
-        var x = method.apply(
-                        HttpRequest.newBuilder()
-                                .uri(URI.create(site)))
-                .build();
-
-        return CLIENT.send(x, HttpResponse.BodyHandlers.ofString()).body();
-
+        return CLIENT.send(request, HttpResponse.BodyHandlers.ofString()).statusCode();
     }
 }
 
