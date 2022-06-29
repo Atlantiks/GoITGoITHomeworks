@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -44,7 +43,7 @@ public class myHTTP {
         // загрузка пользователя с сайта и редактирование отдельных его полей перед загрузкой обратно методом PUT
         User usr = GSON.fromJson(getUserInfoById(site, 4),User.class);
         usr.company.name = "Carnival LLC";
-        usr.id = 12;
+        usr.id = 8;
 
         System.out.println("Загрузка пользователя на сервер методом PUT");
         String serverResponse = sendPutRequest(site + "/users/1",GSON.toJson(usr));
@@ -62,6 +61,7 @@ public class myHTTP {
         // Task 2
         System.out.println("\033[0;91m" + "Task 2");
         System.out.println("================================================" + "\u001B[0m");
+        System.out.println("Получить все комментарии к последнему посту пользователя с id = " + 5);
         getCommentsToLastPostOfUser(site,5);
 
         // Task 3
@@ -72,27 +72,25 @@ public class myHTTP {
 
 
         // Lambda tests to shorten code
-        String result = sendRequest(site + "/users/1", HttpRequest.Builder::GET);
         String result2 = sendRequest(site + "/users", x -> x.POST(HttpRequest.BodyPublishers.ofString(GSON.toJson(usr))));
-        System.out.println(result);
         System.out.println(result2);
     }
 
 
 
     public static void getAllOpenTasks(String site, int userId) throws IOException, InterruptedException {
-        TaskToDo[] tasks = GSON.fromJson(sendGetRequest(site + "/users/" + userId + "/todos"),TaskToDo[].class);
+        TaskToDo[] tasks = GSON.fromJson(sendRequest(site + "/users/" + userId + "/todos",HttpRequest.Builder::GET),TaskToDo[].class);
         Stream.of(tasks).filter(task -> !task.isCompleted()).map(GSON::toJson).forEach(System.out::println);
     }
 
     public static void getCommentsToLastPostOfUser(String site, int userId) throws IOException, InterruptedException {
-        Post[] posts = GSON.fromJson(sendGetRequest(site + "/users/" + userId + "/posts"),Post[].class);
+        Post[] posts = GSON.fromJson(sendRequest(site + "/users/" + userId + "/posts",HttpRequest.Builder::GET),Post[].class);
 
         var lastPost = Arrays.stream(posts)
                 .max(Comparator.comparing(Post::getId))
                 .get().getId();
 
-        var result = sendGetRequest(site + "/posts/" + lastPost + "/comments");
+        var result = sendRequest(site + "/posts/" + lastPost + "/comments",HttpRequest.Builder::GET);
 
         Files.writeString(Path.of(String.format("./src/main/java/homework13/user-%d-post-%d-comments.json",userId,lastPost)),result);
         System.out.println(result);
@@ -104,15 +102,15 @@ public class myHTTP {
     }
 
     public static String getAllUsersInfo(String site) throws IOException, InterruptedException {
-        return sendGetRequest(site + "/users");
+        return sendRequest(site + "/users",HttpRequest.Builder::GET);
     }
 
     public static String getUserInfoById(String site, int id) throws IOException, InterruptedException {
-        return sendGetRequest(site + "/users/" + id);
+        return sendRequest(site + "/users/" + id,HttpRequest.Builder::GET);
     }
 
     public static String getUserInfoByName(String site, String name) throws IOException, InterruptedException {
-        return sendGetRequest(site + "/users?name=" + convertString(name));
+        return sendRequest(site + "/users?name=" + convertString(name),HttpRequest.Builder::GET);
     }
 
     private static String sendGetRequest(String uri) throws IOException, InterruptedException {
@@ -137,6 +135,7 @@ public class myHTTP {
     private static String sendPostRequest(String uri, String data) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uri))
+                .header("Content-Type","application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(data))
                 .build();
 
@@ -157,6 +156,7 @@ public class myHTTP {
     private static String sendPutRequest(String uri, String data) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uri))
+                .header("Content-Type","application/json")
                 .PUT(HttpRequest.BodyPublishers.ofString(data))
                 .build();
 
