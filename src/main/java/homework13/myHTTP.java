@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 public class myHTTP {
     private final static HttpClient CLIENT = HttpClient.newHttpClient();
     private final static Gson GSON = new Gson().newBuilder().setPrettyPrinting().create();
+
     public static void main(String[] args) throws Exception {
         String site = "https://jsonplaceholder.typicode.com";
 
