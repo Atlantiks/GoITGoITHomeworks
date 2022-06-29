@@ -75,12 +75,16 @@ public class myHTTP {
 
     public static void getCommentsToLastPostOfUser(String site, int userId) throws IOException, InterruptedException {
         Post[] posts = GSON.fromJson(sendGetRequest(site + "/users/" + userId + "/posts"),Post[].class);
+
         var lastPost = Arrays.stream(posts)
                 .max(Comparator.comparing(Post::getId))
                 .get().getId();
+
         var result = sendGetRequest(site + "/posts/" + lastPost + "/comments");
-        Files.writeString(Path.of("./src/main/java/homework13/comments.json"),result);
+
+        Files.writeString(Path.of(String.format("./src/main/java/homework13/user-%d-post-%d-comments.json",userId,lastPost)),result);
         System.out.println(result);
+
     }
 
     public static String createUser(User user, String site) throws IOException, InterruptedException {
