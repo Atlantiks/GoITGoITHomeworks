@@ -30,34 +30,46 @@ public class myHTTP {
                 new User.Company("Carnival","Cruising Brand","Bullshit"));
 
         // Task 1
+        System.out.println("\033[0;96m" + "Task 1");
+        System.out.println("================================================" + "\u001B[0m");
+        System.out.println("Загрузка пользователя на сервер методом POST");
+        System.out.println("Ответ сервера");
+        System.out.println(createUser(newUser,site + "/users"));
 
-        String test = createUser(newUser,site + "/users");
-        System.out.println(test);
+        System.out.println("Попытка удаления пользователя по id = 1, ответ сервера: " + sendDeleteRequest(site + "/users/1"));
 
-        System.out.println("Попытка удаления пользователя по id: " + sendDeleteRequest(site + "/users/1"));
-        System.out.println(getUserInfoById(site, 5));
-
-        User usr = GSON.fromJson(getUserInfoById(site, 5),User.class);
+        // загрузка пользователя с сайта и редактирование отдельных его полей перед загрузкой обратно методом PUT
+        User usr = GSON.fromJson(getUserInfoById(site, 4),User.class);
         usr.company.name = "Carnival LLC";
         usr.id = 34;
 
+        System.out.println("Загрузка пользователя на сервер методом PUT");
+        String serverResponse = sendPutRequest(site + "/users/1",GSON.toJson(usr));
+        System.out.println(serverResponse);
 
-        String test2 = sendPutRequest(site + "/users",GSON.toJson(usr));
-        System.out.println(test2);
+        System.out.println("Получение информации обо всех пользователях: ");
+        System.out.println(getAllUsersInfo(site));
+
+        System.out.println("получение информации о пользователе с опредленным id = 3: ");
+        System.out.println(getUserInfoById(site,3));
+
+        System.out.println("получение информации о пользователе с опредленным username = Ervin Howell: ");
+        System.out.println(getUserInfoByName(site,"Ervin Howell"));
 
         // Task 2
-
+        System.out.println("\033[0;91m" + "Task 2");
+        System.out.println("================================================" + "\u001B[0m");
         getCommentsToLastPostOfUser(site,5);
 
         // Task 3
-        System.out.println("\u001B[33m" + "Task 3");
+        System.out.println("\033[0;93m" + "Task 3");
         System.out.println("================================================" + "\u001B[0m");
-
-        getAllOpenTasks(site);
+        System.out.printf("Все открытые задачи для пользователя %d.\n", 7);
+        getAllOpenTasks(site, 7);
     }
 
-    public static void getAllOpenTasks(String site) throws IOException, InterruptedException {
-        TaskToDo[] tasks = GSON.fromJson(sendGetRequest(site + "/users/1/todos"),TaskToDo[].class);
+    public static void getAllOpenTasks(String site, int userId) throws IOException, InterruptedException {
+        TaskToDo[] tasks = GSON.fromJson(sendGetRequest(site + "/users/" + userId + "/todos"),TaskToDo[].class);
         Stream.of(tasks).filter(task -> !task.isCompleted()).map(GSON::toJson).forEach(System.out::println);
     }
 

@@ -16,7 +16,7 @@ public class Timer {
 
     synchronized public void printFiveSecondsPassed() {
         while (true) {
-            if (secondsPassed % 5 == 0 && secondsPassed != 0) System.out.println("\u001B[33m" +
+            if (secondsPassed % 5 == 0 && secondsPassed != 0) System.out.println("\033[0;93m" +
                     Thread.currentThread().getName() + " Прошло 5 секунд" + "\u001B[0m");
             try {
                 wait();
