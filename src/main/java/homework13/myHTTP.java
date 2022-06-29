@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,7 +44,7 @@ public class myHTTP {
         // загрузка пользователя с сайта и редактирование отдельных его полей перед загрузкой обратно методом PUT
         User usr = GSON.fromJson(getUserInfoById(site, 4),User.class);
         usr.company.name = "Carnival LLC";
-        usr.id = 1;
+        usr.id = 12;
 
         System.out.println("Загрузка пользователя на сервер методом PUT");
         String serverResponse = sendPutRequest(site + "/users/1",GSON.toJson(usr));
@@ -71,8 +72,10 @@ public class myHTTP {
 
 
         // Lambda tests to shorten code
-        String result = sendRequest(site, HttpRequest.Builder::GET);
+        String result = sendRequest(site + "/users/1", HttpRequest.Builder::GET);
+        String result2 = sendRequest(site + "/users", x -> x.POST(HttpRequest.BodyPublishers.ofString(GSON.toJson(usr))));
         System.out.println(result);
+        System.out.println(result2);
     }
 
 
@@ -162,11 +165,11 @@ public class myHTTP {
     }
 
     private static String sendRequest(String site,
-            Function<HttpRequest.Builder,HttpRequest.Builder> method) throws IOException, InterruptedException {
+            UnaryOperator<HttpRequest.Builder> method) throws IOException, InterruptedException {
 
         var x = method.apply(
                         HttpRequest.newBuilder()
-                                .uri(URI.create(site + "/users/1")))
+                                .uri(URI.create(site)))
                 .build();
 
         return CLIENT.send(x, HttpResponse.BodyHandlers.ofString()).body();
