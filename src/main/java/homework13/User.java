@@ -1,13 +1,13 @@
 package homework13;
 
 public class User {
-     int id;
-     String name;
-     String email;
-     Address address;
-     String phone;
-     String website;
-     Company company;
+    private int id;
+    private String name;
+    private String email;
+    private Address address;
+    private String phone;
+    private String website;
+    private Company company;
 
     public User(Integer id, String name, String email, Address address, String phone, String website, Company company) {
         this.id = id;
@@ -19,46 +19,59 @@ public class User {
         this.company = company;
     }
 
-    static class Address {
-        String street;
-        String suite;
-        String city;
-        String zipcode;
-        Geo geo;
-
-        public Address(String street, String suite, String city, String zipcode, Geo geo) {
-            this.street = street;
-            this.suite = suite;
-            this.city = city;
-            this.zipcode = zipcode;
-            this.geo = geo;
-        }
-    }
-
-    static class Geo {
-        double lat;
-        double lng;
-
-        public Geo(double lat, double lng) {
-            this.lat = lat;
-            this.lng = lng;
-        }
-    }
-
-    static class Company {
-        String name;
-        String catchPhrase;
-        String bs;
-
-        public Company(String name, String catchPhrase, String bs) {
-            this.name = name;
-            this.catchPhrase = catchPhrase;
-            this.bs = bs;
-        }
-    }
-
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
 }

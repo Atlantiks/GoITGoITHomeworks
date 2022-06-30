@@ -25,11 +25,11 @@ public class myHTTP {
         User newUser = new User(7,
                 "Sergii Shynkarenko",
                 "email@mail.com",
-                new User.Address("Korolyov","28","Odesa","65104",
-                        new User.Geo(-37.3159,81.1496)),
+                new Address("Korolyov","28","Odesa","65104",
+                        new Geo(-37.3159,81.1496)),
                 "380637517677",
                 "www.site.com.ua",
-                new User.Company("Carnival","Cruising Brand","Bullshit"));
+                new Company("Carnival","Cruising Brand","Bullshit"));
 
         // Task 1
         System.out.println("\033[0;96m" + "Task 1");
@@ -43,8 +43,8 @@ public class myHTTP {
 
         // загрузка пользователя с сайта и редактирование отдельных его полей перед загрузкой обратно методом PUT
         User usr = GSON.fromJson(getUserInfoById(site, 4),User.class);
-        usr.company.name = "Carnival LLC";
-        usr.id = 8;
+        usr.getCompany().setName("Carnival LLC");
+        usr.setId(8);
 
         System.out.println("Загрузка пользователя на сервер методом PUT");
         System.out.println(updateUser(usr,site + "/users/1"));
